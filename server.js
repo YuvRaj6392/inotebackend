@@ -1,12 +1,18 @@
-const connectToMongo=require('./db');
-connectToMongo();
+const db=require('./models');
 const express=require('express');
 const app=express();
-app.get('/',(req,res)=>{
-    res.status(200).json({
-        message:'Hey welcome to the home page!'
-    })
-})
+db.mongoose.connect(db.url,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  }).then(()=>{
+    console.log('connected to the database')
+  }).catch((err)=>{
+    console.log(err);
+    process.exit();
+  })
+
+require('./routes/user.routes')(app);
+require('./routes/note.routes')(app)
 app.listen(8080,()=>{
-    console.log('Server is listening to PORT 8080!')
+    console.log('The server is listening to the port 8080!')
 })
