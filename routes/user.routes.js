@@ -4,6 +4,7 @@ const { body, validationResult } = require('express-validator');
 const bcrypt=require('bcrypt')
 const secret="yuvrajisagoodboy";
 const jwt=require('jsonwebtoken');
+const fetchUsers=require('../middleware/auth')
 
 module.exports=app=>{
     var router=require('express').Router();
@@ -67,11 +68,14 @@ module.exports=app=>{
     {
       return res.status(400).json({error:'Please try to login with correct credentials!'})
     }
-    const data=user.id
+    const data=user.id;
         console.log(data)
         const jwtToken=jwt.sign(data,secret);
        
-        res.json(jwtToken)
+        res.json({
+          id:user.id,
+          token:jwtToken
+        })
     });
    
     
@@ -83,5 +87,21 @@ module.exports=app=>{
   })
 
 
+
+
+  //Route3 get user loggedin Details!
+ router.get('/home/:id',fetchUsers,(req,res)=>{
+  const id=req.params.id;
+  User.findOne({_id:id}).then(data=>{
+    res.status(200).json({
+      data:data
+    })
+  
+  }).catch(err=>{
+    res.status(400).json({
+      error:"No user found!"
+    })
+  })
+ })
     app.use('/api/auth',router);
 }
