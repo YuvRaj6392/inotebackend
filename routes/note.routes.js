@@ -1,10 +1,11 @@
 const fetchUsers=require('../middleware/auth');
 const db=require('../models');
+const userRoutes = require('./user.routes');
 const Notes=db.notes;
 module.exports=app=>{
     var router=require('express').Router();
     router.get('/notes',fetchUsers,(req,res)=>{
-      Notes.findOne({user:req.body.id}).then(data=>{
+      Notes.find({user:req.body.id}).then(data=>{
         res.status(200).json({
           data:data
         })
@@ -32,5 +33,35 @@ module.exports=app=>{
       })
      
     })
+
+
+
+    router.put('/notes/:id',fetchUsers, async (req,res)=>{
+      
+      const {title,description,tag}=req.body;
+      const newNote={};
+      if(title){newNote.title=title};
+      if(description){newNote.description=description};
+      if(tag){newNote.tag=tag};
+
+    Notes.findById(req.params.id).then(data=>{
+      console.log('found')
+    }).catch(err=>{
+      console.log('not found!')
+    });
+    
+    await Notes.findByIdAndUpdate(req.params.id,{$set: newNote},{new:true}).then(data=>{
+      res.json({data})
+    }).catch(err=>{
+      console.log(err)
+    });
+    
+
+
+     
+    })
+
+
+    
     app.use('/api',router);
 }
