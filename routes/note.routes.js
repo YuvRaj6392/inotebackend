@@ -62,6 +62,29 @@ module.exports=app=>{
     })
 
 
+    router.delete('/notes/:id',fetchUsers, async (req,res)=>{
+      
+     
+
+    Notes.findById(req.params.id).then(data=>{
+      console.log('found')
+    }).catch(err=>{
+      console.log('not found!')
+    });
+    
+    await Notes.findByIdAndRemove(req.params.id).then(data=>{
+      res.json({data})
+    }).catch(err=>{
+      console.log(err)
+      res.status(404).send('not found!');
+    });
+    
+
+
+     
+    })
+
+
     
     app.use('/api',router);
 }
