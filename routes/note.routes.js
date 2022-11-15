@@ -4,10 +4,12 @@ const userRoutes = require('./user.routes');
 const Notes=db.notes;
 module.exports=app=>{
     var router=require('express').Router();
+
+
     router.get('/notes',fetchUsers,(req,res)=>{
-      Notes.find({user:req.body.id}).then(data=>{
+      Notes.find({user:req.query.id}).then(data=>{
         res.status(200).json({
-          data:data
+         message:data
         })
       }).catch(err=>{
         res.status(500).json('No user was found!')
@@ -24,7 +26,7 @@ module.exports=app=>{
       })
       notes.save(notes).then(data=>{
         res.status(200).json({
-          data:data
+          data
         })
       }).catch(err=>{
         res.status(500).json({
