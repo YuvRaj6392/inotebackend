@@ -22,7 +22,8 @@ module.exports=app=>{
       const notes=new Notes({
         user:req.body.user,
         title:req.body.title,
-        description:req.body.description
+        description:req.body.description,
+        tag:req.body.tag
       })
       notes.save(notes).then(data=>{
         res.status(200).json({
@@ -39,18 +40,12 @@ module.exports=app=>{
 
 
     router.put('/notes/:id',fetchUsers, async (req,res)=>{
-      
+      console.log('hello!')
       const {title,description,tag}=req.body;
       const newNote={};
       if(title){newNote.title=title};
       if(description){newNote.description=description};
-      if(tag){newNote.tag=tag};
-
-    Notes.findById(req.params.id).then(data=>{
-      console.log('found')
-    }).catch(err=>{
-      console.log('not found!')
-    });
+      if(tag){newNote.tag=tag}
     
     await Notes.findByIdAndUpdate(req.params.id,{$set: newNote},{new:true}).then(data=>{
       res.json({data})

@@ -52,6 +52,7 @@ module.exports=app=>{
     //authenticate a user
     router.post('/login',[body('email').isEmail(),body('password').exists()],(req,res)=>{
       const errors = validationResult(req);
+      let success=false
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
@@ -61,20 +62,21 @@ module.exports=app=>{
       console.log(user);
       if(!user)
     {
-      return res.status(400).json({error:'Please try to login with correct credentials!'})
+      return res.status(400).json({success,error:'Please try to login with correct credentials!'})
     }
     const comparePassword=bcrypt.compareSync(password,user.password);
     if(!comparePassword)
     {
-      return res.status(400).json({error:'Please try to login with correct credentials!'})
+      return res.status(400).json({success,error:'Please try to login with correct credentials!'})
     }
     const data=user.id;
         console.log(data)
         const jwtToken=jwt.sign(data,secret);
-       
+        success=true
         res.json({
           id:user.id,
-          token:jwtToken
+          token:jwtToken,
+          success
         })
     });
    
