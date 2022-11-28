@@ -13,8 +13,9 @@ module.exports=app=>{
     //for signup
     router.post('/',[body('email').isEmail(),body('name').isLength({min:3}),body('password').isLength({min:3})],(req,res)=>{
         const errors = validationResult(req);
+        let success=false;
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({success, errors: errors.array() });
     }
     
     User.findOne({email:req.body.email},(err,data)=>{
@@ -32,15 +33,15 @@ module.exports=app=>{
         const data=user.id
         console.log(data)
         const jwtToken=jwt.sign(data,secret);
-       
-        res.json(jwtToken)
+        success=true
+        res.json({success,token,jwtToken})
       } ).catch(err=>{
-        res.json(err.message)
+        res.json({success,error:err.message})
       });
      }
      else
      {
-      res.json('Account already exist!')
+      res.json({success,error:'Account already exist!'})
      }
      
     })
